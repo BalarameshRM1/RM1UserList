@@ -1,0 +1,57 @@
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: RM1UserL              # 👈 Your Azure Web App name
+  AZURE_WEBAPP_PACKAGE_PATH: './build'     # 👈 Deploy build folder, not src
+  NODE_VERSION: '18.x'                     # React works well with Node 18 LTS
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install and build
+      run: |
+        npm install
+        npm run build   # Creates ./build folder
+
+    - name: Upload build folder as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: react-build
+        path: build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: react-build
+        path: build
+
+    - name: Deploy React build to Azure WebApp
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
