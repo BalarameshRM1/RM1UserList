@@ -3,33 +3,33 @@ name: Deploy to Azure WebApp RM1UserList
 on:
   push:
     branches:
-      - main
+      - main   # or your branch name
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout code
+      - name: Checkout GitHub Action
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
+      # Step 2: Setup Node.js (if your app is Node.js)
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.x'
 
-    - name: Install and Build
-      run: |
-        npm install
-        npm run build
+      # Step 3: Install and Build
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
 
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-
-    - name: Deploy to Azure WebApp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: "RM1UserL"
-        package: .
+      # Step 4: Deploy to Azure WebApp using Publish Profile
+      - name: 'Deploy to Azure WebApp'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'RM1UserL'   # 👈 your App Service name
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: .
