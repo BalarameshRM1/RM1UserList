@@ -3,7 +3,7 @@ name: Deploy React App to Azure WebApp
 on:
   push:
     branches:
-      - main   # change branch if u need
+      - main   # 👈 change if you use another branch
 
 jobs:
   build-and-deploy:
@@ -18,20 +18,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.x'
+          node-version: 18   # ✅ 18 is fine (not 18.x)
 
-      # Step 3: Install & Build React app
-      - name: Install dependencies and build
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Build React app
+      - name: Build React app
+        run: npm run build
+
+      # ✅ Step 5: Verify build folder
+      - name: Verify build folder exists
         run: |
-          npm install
-          npm run build
-      - name: Verify build output
-        run: |
-          echo "Listing build folder contents..."
-          ls -l build
+          if [ ! -d "build" ]; then
+            echo "❌ Build folder not found. Something went wrong in npm run build."
+            exit 1
+          else
+            echo "✅ Build folder found. Ready to deploy."
+            ls -la build
+          fi
 
-
-      # Step 4: Deploy to Azure WebApp
+      # Step 6: Deploy to Azure WebApp
       - name: Deploy React App to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
