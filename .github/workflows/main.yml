@@ -20,16 +20,21 @@ jobs:
         with:
           node-version: '18.x'
 
-      # Step 3: Install and Build
-      - name: Install and Build
-        run: |
-          npm install
-          npm run build
+     
+     # Step 3: Install and Build
+- name: Install and Build
+  run: |
+    npm install
+    npm run build
 
-      # Step 4: Deploy to Azure WebApp using Publish Profile
-      - name: 'Deploy to Azure WebApp'
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'RM1UserL'   # 👈 your App Service name
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./build
+# Step 4: Zip build folder
+- name: Archive production build
+  run: zip -r build.zip build
+
+# Step 5: Deploy to Azure WebApp
+- name: 'Deploy to Azure WebApp'
+  uses: azure/webapps-deploy@v2
+  with:
+    app-name: 'RM1UserL'   # your App Service name
+    publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+    package: build.zip   # 👈 now deploying zipped build folder
