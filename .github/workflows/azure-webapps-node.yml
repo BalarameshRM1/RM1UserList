@@ -2,31 +2,34 @@ name: Deploy React App to Azure WebApp
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches:
+      - main   # 👈 change if you use another branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout repo
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: '18.x'
-          cache: 'npm'
 
-      - name: Install and Build
+      # Step 3: Install & Build React app
+      - name: Install dependencies and build
         run: |
           npm install
           npm run build
 
-      - name: Deploy to Azure WebApp
+      # Step 4: Deploy to Azure WebApp
+      - name: Deploy React App to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: RM1UserL   # your WebApp name
+          app-name: 'RM1UserL'   # 👈 Your Azure WebApp name
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./build
