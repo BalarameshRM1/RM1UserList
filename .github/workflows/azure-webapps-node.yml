@@ -25,6 +25,11 @@ jobs:
         run: |
           npm install
           npm run build
+      - name: Verify build output
+        run: |
+          echo "Listing build folder contents..."
+          ls -l build
+
 
       # Step 4: Deploy to Azure WebApp
       - name: Deploy React App to Azure WebApp
