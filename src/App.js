@@ -8,7 +8,7 @@
   const userDetailsList = [
     {
       uniqueNo: 1,
-      name: "Harish Yadav",
+      name: "Harish Yadav Pilli",
       role: "Frontend Developer",
       imageUrl: "./harish.jpg"
     },
