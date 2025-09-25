@@ -12,37 +12,24 @@ jobs:
     steps:
       # Step 1: Checkout repo
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js
+      # Step 2: Setup Node.js 22
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 18   # ✅ 18 is fine (not 18.x)
+          node-version: '22.x'
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: npm install
-
-      # Step 4: Build React app
-      - name: Build React app
-        run: npm run build
-
-      # ✅ Step 5: Verify build folder
-      - name: Verify build folder exists
+      # Step 3: Install dependencies & build React app
+      - name: Install dependencies and build
         run: |
-          if [ ! -d "build" ]; then
-            echo "❌ Build folder not found. Something went wrong in npm run build."
-            exit 1
-          else
-            echo "✅ Build folder found. Ready to deploy."
-            ls -la build
-          fi
+          npm ci
+          npm run build
 
-      # Step 6: Deploy to Azure WebApp
+      # Step 4: Deploy to Azure WebApp
       - name: Deploy React App to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'RM1UserL'   # 👈 Your Azure WebApp name
+          app-name: 'RM1codersHR'   # 👈 your Azure WebApp name
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./build
