@@ -30,6 +30,6 @@ jobs:
       - name: Deploy React App to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'RM1codersHR'   # 👈 your Azure WebApp name
+          app-name: 'RM1UserListN'   # 👈 your Azure WebApp name
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./build
